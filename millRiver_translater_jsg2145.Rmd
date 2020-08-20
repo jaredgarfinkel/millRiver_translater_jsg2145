@@ -1,0 +1,78 @@
+---
+title: "millRiver_translater_jsg2145"
+author: "Jared Garfinkel"
+date: "8/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(rvest)
+library(httr)
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+```{r}
+url = "https://drive.google.com/drive/u/0/my-drive"
+
+mrs_sess = html_session(url)
+
+a = mrs_sess %>% 
+  jump_to("https://docs.google.com/forms/d/1_FiTqZKOlDX-HF7SgBnGP8onQau51sKqHFSodC9F6uo/edit")
+
+a
+
+b = a %>% read_html() %>% 
+  html_nodes("#SchemaEditor .exportInput , .exportTextarea") %>% 
+  html_text()
+
+# length(b)
+# head(b)  
+
+str_replace(b[[4]], " ", "%20")
+```
+
+```{r}
+url2 = "https://translate.google.com/"
+
+c = html_session(url2)
+
+# headers(c)
+# status_code(c)
+
+d = c %>% 
+  jump_to("https://translate.google.com/#view=home&op=translate&sl=en&tl=es")
+
+d
+
+e = c %>% 
+  jump_to(paste0("https://translate.google.com/#view=home&op=translate&sl=en&tl=es", "&text=", str_replace(b[[4]], " ", "%20")))
+
+
+html_attrs(e)
+  
+f = e %>% 
+  read_html()
+  # html_nodes(".jfk-button-standard .jfk-button-img")
+
+f= e %>% 
+  html_nodes("#\:m .gt-is-tr") %>% 
+  html_text()
+
+# %>% str_detect("estoy")
+#source
+```
+
